@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Company>Wobigtech</Company>
+    <Authors>Wobigtech</Authors>
+    <StartupObject>Wobigtech.Companion.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="1.7.11" />
+    <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="3.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="3.1.4" />
+    <PackageReference Include="NATS.Client" Version="0.10.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\aspnet-core\src\Wobigtech.Core.Domain.Shared\Wobigtech.Core.Domain.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

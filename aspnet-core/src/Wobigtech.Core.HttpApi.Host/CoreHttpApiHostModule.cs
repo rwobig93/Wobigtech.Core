@@ -25,6 +25,7 @@ using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Wobigtech.Core.IdentityServer;
 
 namespace Wobigtech.Core
 {

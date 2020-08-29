@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Wobigtech.Core.OSIO;
+using Wobigtech.Core.Tools;
 
 namespace Wobigtech.Core
 {

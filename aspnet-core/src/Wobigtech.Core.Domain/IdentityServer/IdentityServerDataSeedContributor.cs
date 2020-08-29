@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
+using Nito.AsyncEx;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -119,7 +120,7 @@ namespace Wobigtech.Core.IdentityServer
                     name: webClientId,
                     scopes: commonScopes,
                     grantTypes: new[] {"hybrid"},
-                    secret: (configurationSection["Core_Web:ClientSecret"] ?? "1q2w3e*").Sha256(),
+                    secret: (configurationSection["Core_Web:ClientSecret"] ?? "1q2w3E*").Sha256(),
                     redirectUri: $"{webClientRootUrl}signin-oidc",
                     postLogoutRedirectUri: $"{webClientRootUrl}signout-callback-oidc",
                     frontChannelLogoutUri: $"{webClientRootUrl}Account/FrontChannelLogout"
@@ -134,7 +135,7 @@ namespace Wobigtech.Core.IdentityServer
                     name: consoleClientId,
                     scopes: commonScopes,
                     grantTypes: new[] {"password", "client_credentials"},
-                    secret: (configurationSection["Core_App:ClientSecret"] ?? "1q2w3e*").Sha256()
+                    secret: (configurationSection["Core_App:ClientSecret"] ?? "1q2w3E*").Sha256()
                 );
             }
         }

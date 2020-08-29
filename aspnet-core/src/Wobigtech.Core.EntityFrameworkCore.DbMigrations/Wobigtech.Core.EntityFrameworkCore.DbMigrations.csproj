@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wobigtech.Core.EntityFrameworkCore\Wobigtech.Core.EntityFrameworkCore.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5" />
+    <ProjectReference Include="..\Wobigtech.Core.EntityFrameworkCore\Wobigtech.Core.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
 </Project>

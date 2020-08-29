@@ -25,16 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wobigtech.Core.Application\Wobigtech.Core.Application.csproj" />
-    <ProjectReference Include="..\Wobigtech.Core.EntityFrameworkCore.DbMigrations\Wobigtech.Core.EntityFrameworkCore.DbMigrations.csproj" />
-    <ProjectReference Include="..\Wobigtech.Core.HttpApi\Wobigtech.Core.HttpApi.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Logs\**" />
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
     <None Remove="Logs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wobigtech.Core.Application\Wobigtech.Core.Application.csproj" />
+    <ProjectReference Include="..\Wobigtech.Core.EntityFrameworkCore.DbMigrations\Wobigtech.Core.EntityFrameworkCore.DbMigrations.csproj" />
+    <ProjectReference Include="..\Wobigtech.Core.HttpApi\Wobigtech.Core.HttpApi.csproj" />
   </ItemGroup>
 
 </Project>

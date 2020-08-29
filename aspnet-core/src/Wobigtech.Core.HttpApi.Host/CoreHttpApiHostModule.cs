@@ -26,6 +26,9 @@ using Volo.Abp.Modularity;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 using Wobigtech.Core.IdentityServer;
+using Wobigtech.Core.AppComm;
+using Serilog;
+using NATS.Client;
 
 namespace Wobigtech.Core
 {
@@ -56,6 +59,14 @@ namespace Wobigtech.Core
             ConfigureVirtualFileSystem(context);
             ConfigureCors(context, configuration);
             ConfigureSwaggerServices(context);
+            ConfigureNatServer();
+        }
+
+        private void ConfigureNatServer()
+        {
+            Log.Debug("Configuring NAT Server");
+            NatUtil.SetupNatConnection();
+            Log.Information("Finished configuring NAT server");
         }
 
         private void ConfigureUrls(IConfiguration configuration)

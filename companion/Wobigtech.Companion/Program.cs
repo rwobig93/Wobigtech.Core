@@ -10,6 +10,8 @@ namespace Wobigtech.Companion
 
             Function.ParseLaunchArgs(args);
 
+            Function.TestMenu();
+
             if (Function.LoadConfig() == StatusReturn.NotFound)
             {
                 Function.InitializeFirstRun();

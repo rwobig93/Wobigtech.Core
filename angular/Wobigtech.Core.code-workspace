@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\aspnet-core\\src\\Wobigtech.Core.HttpApi.Host\\Logs"
+		}
+	],
+	"settings": {}
+}

@@ -355,7 +355,7 @@ namespace Wobigtech.Companion.Local
         {
             Log.Information("Starting home server setup");
             Console.WriteLine("Please enter the home server in socket form | Example: games.wobigtech.net:9595 | [URL/Hostname]:[Port Number] | Type q to quit");
-            Console.WriteLine("Home Server Socket: ");
+            Console.Write("Home Server Socket: ");
             string response = Console.ReadLine();
             bool moveOn = false;
             while (!moveOn)

@@ -13,6 +13,7 @@ using static Wobigtech.Companion.Local.Housekeeping;
 using Wobigtech.Core.Enums;
 using Wobigtech.Companion.Handlers;
 using Wobigtech.Companion.Local;
+using Wobigtech.Core.Comm;
 
 namespace Wobigtech.Companion
 {
@@ -382,6 +383,180 @@ namespace Wobigtech.Companion
             else
             {
                 Log.Information("Secret is not null or empty");
+            }
+        }
+
+        internal static void TestMenu()
+        {
+            PresentTestMenu();
+            Console.Write("Home Server Socket: ");
+            string response = Console.ReadLine();
+            bool moveOn = false;
+            while (!moveOn)
+            {
+                if (response.ToLower() == "q")
+                {
+                    Log.Debug($"Exiting Home Server Setup, answer: {response}");
+                    Function.CloseCompanion();
+                    return;
+                }
+                else if (!(ValidHomeSocket(response)))
+                {
+                    Console.WriteLine("Invalid host or response entered, please enter a valid socket:");
+                }
+                response = Console.ReadLine();
+            }
+        }
+
+        private static void PresentTestMenu()
+        {
+            Log.Debug("Presenting Test Menu");
+            while (!CloseApp)
+            {
+                Console.WriteLine(
+                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
+                    $"|  Enter the corresponding menu number for the action you want to perform:  |{Environment.NewLine}" +
+                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
+                    $"|  1. Change Home Server URL                                                |{Environment.NewLine}" +
+                    $"|  2. Open Config & Log root directory                                      |{Environment.NewLine}" +
+                    $"|  3. Change GameServer Folder Location                                     |{Environment.NewLine}" +
+                    $"|  4. Finish Configuration and Run                                          |{Environment.NewLine}" +
+                    $"|  5. Close Companion and Don't Run                                         |{Environment.NewLine}" +
+                    $"|  6. Send Messages to Nat Server                                           |{Environment.NewLine}" +
+                    $"|  7. Subscribe to Nat Channel                                              |{Environment.NewLine}" +
+                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}");
+                Console.Write($"{Environment.NewLine}Test Option: ");
+                var answer = Console.ReadLine();
+                Log.Debug($"Test Menu answer was: {answer}");
+                if (!int.TryParse(answer, out int intAnswer))
+                {
+                    Log.Debug("Test Menu answer entered was an invalid response");
+                    Console.WriteLine("Test Answer wasn't invalid, please try again");
+                    Thread.Sleep(3000);
+                }
+                else
+                {
+                    Log.Debug($"Valid test menu option {intAnswer} was entered");
+                    switch (intAnswer)
+                    {
+                        case 1:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling SetupHomeServer()");
+                            SetupHomeServer();
+                            break;
+                        case 2:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling OpenAppStorage()");
+                            OpenAppStorage();
+                            break;
+                        case 3:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling ChangeServerDirectory()");
+                            ChangeGameServerDirectory();
+                            break;
+                        case 4:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling FinishConfig()");
+                            FinishConfig();
+                            break;
+                        case 5:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling CloseCompanion()");
+                            CloseCompanion();
+                            break;
+                        case 6:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling TestNatMessages()");
+                            TestNatMessages();
+                            break;
+                        case 7:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling TestNatListener()");
+                            TestNatListener();
+                            break;
+                        default:
+                            Log.Debug("Test Answer entered wasn't a valid presented option");
+                            Console.WriteLine("Test Answer entered isn't one of the options, please try again");
+                            Thread.Sleep(3000);
+                            break;
+                    }
+                }
+                Console.Clear();
+            }
+            Log.Information("Exited test menu");
+        }
+
+        private static void TestNatListener()
+        {
+            Console.WriteLine("Enter 'q' to exit this menu");
+            bool moveOn = false;
+            while (!moveOn)
+            {
+                try
+                {
+                    Console.Write("Enter Nat Subject to Listen to: ");
+                    string response = Console.ReadLine();
+                    if (response.ToLower() == "q")
+                    {
+                        Log.Debug($"Exiting Test Nat Listener, answer: {response}");
+                        moveOn = true;
+                    }
+                    else
+                    {
+                        NatConn.SubscribeAsync(response, (s, a) =>
+                        {
+                            Log.Debug($"NAT-LISTEN: [sub]{response} [msg]{a.Message}");
+                            Console.WriteLine($"NAT-LISTEN: [sub]{response} [msg]{a.Message}");
+                        });
+                        Console.WriteLine($"Nat Listener started: {response}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"NAT-LISTEN EXCEPTION: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                    Console.WriteLine($"NAT-LISTEN EXCEPTION: {ex.Message}");
+                }
+            }
+        }
+
+        private static void TestNatMessages()
+        {
+            Console.WriteLine("Enter 'q' to exit this menu");
+            Console.WriteLine("Enter 'c' to change Nat Subjects");
+            string subject = "";
+            bool moveOn = false;
+            while (!moveOn)
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(subject))
+                    {
+                        Console.Write("Enter Nat Subject to publish to: ");
+                        subject = Console.ReadLine();
+                    }
+                    if (!string.IsNullOrWhiteSpace(subject))
+                    {
+                        Console.WriteLine($"Enter Nat Message to publish to [{subject}]: ");
+                        string response = Console.ReadLine();
+                        if (response.ToLower() == "q")
+                        {
+                            Log.Debug($"Exiting Test Nat Publisher, answer: {response}");
+                            moveOn = true;
+                        }
+                        else if (response.ToLower() == "c")
+                        {
+                            Console.Write("Enter Nat Subject to publish to: ");
+                            subject = Console.ReadLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Publishing [{subject}]: {response}");
+                            NatConn.Publish(subject, NatComm.NatMsgSend(NatCommType.CmdReq, response));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"NAT Subject [{subject}] is still null or empty, rolling back...");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"NAT-PUB EXCEPTION: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                    Console.WriteLine($"NAT-PUB EXCEPTION: {ex.Message}");
+                }
             }
         }
     }

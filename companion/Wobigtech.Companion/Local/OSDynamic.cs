@@ -38,7 +38,8 @@ namespace Wobigtech.Companion
                 var assy = System.Reflection.Assembly.GetEntryAssembly();
                 var companyName = assy.GetCustomAttributes<AssemblyCompanyAttribute>()
                   .FirstOrDefault();
-                basePath = $@"{Path.Combine(userPath, companyName.Company)}";
+                var productName = assy.GetCustomAttribute<AssemblyProductAttribute>().Product;
+                basePath = $@"{Path.Combine(userPath, companyName.Company)}\{productName}";
             }
             return basePath;
         }

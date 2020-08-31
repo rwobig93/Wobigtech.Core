@@ -6,16 +6,16 @@ namespace Wobigtech.Companion
     {
         static void Main(string[] args)
         {
-            Function.InitializeLogger();
+            Function.InitializeLogger(); args = new string[] { "-test" };
 
             Function.ParseLaunchArgs(args);
-
-            Function.TestMenu();
 
             if (Function.LoadConfig() == StatusReturn.NotFound)
             {
                 Function.InitializeFirstRun();
             }
+
+            Function.TestMenu();
 
             Function.TriggerSettingsByConfig();
 

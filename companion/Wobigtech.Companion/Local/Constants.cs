@@ -24,6 +24,7 @@ namespace Wobigtech.Companion
         // Bools
         public static bool CloseApp { get; set; } = false;
         public static bool WorkerTelemetryRunning { get; set; } = false;
+        public static bool TestMode { get; set; } = false;
         // Classes
         public static Logger Logger { get; set; }
         public static Config Config { get; set; }

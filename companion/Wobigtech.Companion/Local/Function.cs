@@ -43,6 +43,11 @@ namespace Wobigtech.Companion
                     Constants.LevelSwitch.MinimumLevel = LogEventLevel.Debug;
                     Log.Debug("Launch Arg is -debug, switched logging to debug");
                 }
+                if (arg.ToLower() == "-test")
+                {
+                    Constants.TestMode = true;
+                    Log.Debug("Launch Arg is -test, enabling test mode");
+                }
             }
         }
 
@@ -388,6 +393,15 @@ namespace Wobigtech.Companion
 
         internal static void TestMenu()
         {
+            if (!Constants.TestMode)
+            {
+                Log.Debug($"Test Mode is {Constants.TestMode}, skipping Test Menu");
+                return;
+            }
+            else
+            {
+                Log.Information($"Test Mode is {Constants.TestMode}, enabling Test Menu");
+            }
             PresentTestMenu();
             Console.Write("Home Server Socket: ");
             string response = Console.ReadLine();

@@ -47,7 +47,7 @@ namespace Wobigtech.Companion.Shared
             string answer = "";
             while (!answered)
             {
-                Console.WriteLine($"{question} [y/n]?{Environment.NewLine}");
+                Console.Write($"{question} [y/n]? ");
                 answer = Console.ReadLine().ToLower();
                 if (answer != "y" && answer != "n")
                 {

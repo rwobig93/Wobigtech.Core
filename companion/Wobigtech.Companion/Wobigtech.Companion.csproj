@@ -6,6 +6,7 @@
     <Company>Wobigtech</Company>
     <Authors>Wobigtech</Authors>
     <StartupObject>Wobigtech.Companion.Program</StartupObject>
+    <Product>Companion</Product>
   </PropertyGroup>
 
   <ItemGroup>

@@ -135,8 +135,8 @@ namespace Wobigtech.Companion.Local
                     $"         - A folder that doesn't require administrative rights (no Program Files or Windows folders){Environment.NewLine}" +
                     $"           ***If you use an admininistrative required folder this application will require admin rights everytime it's run{Environment.NewLine}" +
                     $"         - If you don't enter anything this will default to the recommended directory:{Environment.NewLine}" +
-                    $"           {OSDynamic.GetDefaultGameServerPath()}{Environment.NewLine}" +
-                    $"{Environment.NewLine}Folder Path: ");
+                    $"           {OSDynamic.GetDefaultGameServerPath()}{Environment.NewLine}");
+                Console.Write($"Folder Path: ");
                 string answer = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(answer))
                 {
@@ -369,8 +369,14 @@ namespace Wobigtech.Companion.Local
                 else if (!(ValidHomeSocket(response)))
                 {
                     Console.WriteLine("Invalid host or response entered, please enter a valid socket:");
+                    response = Console.ReadLine();
                 }
-                response = Console.ReadLine();
+                else
+                {
+                    Log.Information("Valid response entered, continuing");
+                    Console.WriteLine("Socket entered verified to be reachable!");
+                    moveOn = true;
+                }
             }
 
             bool updateStatus = UpdateHomeServer();

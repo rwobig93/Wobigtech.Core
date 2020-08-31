@@ -64,7 +64,7 @@ namespace Wobigtech.Core.AppComm
         {
             Log.Debug("Starting Nat Message Handler");
             IAsyncSubscription aSubscription = NatConn.SubscribeAsync(NatSubjects.Join);
-            aSubscription.MessageHandler += NatEvents.NatMsgHandler;
+            aSubscription.MessageHandler += NatEvents.NatMsgHandlerGeneral;
             aSubscription.Start();
             Log.Information("Nat Message Handler Started");
         }

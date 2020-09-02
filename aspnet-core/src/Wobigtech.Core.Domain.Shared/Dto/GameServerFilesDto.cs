@@ -8,8 +8,8 @@ namespace Wobigtech.Core.Dto
     {
         public string Game { get; set; }
         public string Server { get; set; }
-        public List<string> Executables { get; set; }
-        public List<string> FilesScripts { get; set; }
-        public List<string> FilesLogs { get; set; }
+        public List<string> Executables { get; set; } = new List<string>();
+        public List<string> FilesScripts { get; set; } = new List<string>();
+        public List<string> FilesLogs { get; set; } = new List<string>();
     }
 }

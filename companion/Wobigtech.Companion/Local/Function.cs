@@ -14,6 +14,7 @@ using Wobigtech.Core.Enums;
 using Wobigtech.Companion.Handlers;
 using Wobigtech.Companion.Local;
 using Wobigtech.Core.Comm;
+using System.Collections.Generic;
 
 namespace Wobigtech.Companion
 {
@@ -22,8 +23,9 @@ namespace Wobigtech.Companion
         public static void InitializeLogger()
         { 
             Logger = new LoggerConfiguration()
-                .WriteTo.File($"{PathLogs}\\Wobigtech_Companion.log", rollingInterval: RollingInterval.Day)
                 .MinimumLevel.ControlledBy(LevelSwitch)
+                .WriteTo.Async(c => c.File($"{PathLogs}\\Wobigtech_Companion.log", rollingInterval: RollingInterval.Day))
+                .WriteTo.Async(c => c.Seq("http://192.168.1.249:5341", apiKey: "bJFq4TA6KTIENPM1YQpE"))
                 .CreateLogger();
 #if DEBUG
             LevelSwitch.MinimumLevel = LogEventLevel.Debug;
@@ -100,7 +102,8 @@ namespace Wobigtech.Companion
             Log.Debug("Starting StartTimedJobs()");
             InitializeHangFire();
             //RecurringJob.AddOrUpdate(() => Jobs.GameAndModUpdater15Min(), Jobs.GetCronString(CronTime.MinFifteen));
-            RecurringJob.AddOrUpdate(() => Jobs.GameServerFileUpdater15Min(), Jobs.GetCronString(CronTime.MinFifteen));
+            Log.Warning(Cron.MinuteInterval(15));
+            RecurringJob.AddOrUpdate(() => Jobs.GameServerFileUpdater15Min(), Cron.MinuteInterval(15));
             Log.Information("Finished starting timed jobs");
         }
 
@@ -267,8 +270,39 @@ namespace Wobigtech.Companion
         {
             Log.Debug("Updating settings based on config file");
             ChangeLoggingLevel(Config.LoggingLevel);
+            ValidateAllFilePaths();
             Log.Information("Finished updating settings based on config");
         }
+
+        private static void ValidateAllFilePaths()
+        {
+            Log.Debug("Calling ValidateAllFilePaths()");
+            List<string> directories = new List<string>();
+
+            directories.Add(Constants.PathLogs);
+            directories.Add(Constants.PathSourceFolder);
+            directories.Add(Constants.PathCache);
+            directories.Add(Config.PathGameServerLocation);
+            
+            foreach (var dir in directories)
+            {
+                try
+                {
+                    if (!Directory.Exists(dir))
+                    {
+                        Log.Debug($"Creating missing directory: {dir}");
+                        Directory.CreateDirectory(dir);
+                        Log.Information($"Created missing directory: {dir}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Unable to create required directory");
+                }
+            }
+            Log.Information("Finished validating required file paths");
+        }
+
         public static StatusReturn LoadConfig()
         {
             Log.Debug("Starting LoadConfig()");

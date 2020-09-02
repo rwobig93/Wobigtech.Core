@@ -19,7 +19,7 @@ namespace Wobigtech.Core
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Async(c => c.File("Logs/logs.txt"))
-                .WriteTo.Async(c => c.Seq("http://192.168.1.249:5341", apiKey: ""))
+                .WriteTo.Async(c => c.Seq("http://192.168.1.249:5341", apiKey: "cKPo89Z2SqNFhISSVC1z"))
                 .CreateLogger();
 
             try

@@ -48,7 +48,7 @@ namespace Wobigtech.Core.AppComm
             {
                 Log.Warning("NatConn is not null, we must have attempted to initialize the Nat Listener after it was already started!");
             }
-            StartNatMsgHandler();
+            StartNatMsgHandler(NatSubjects.Join);
             SendTestNatMsg("Message", NatSubjects.Join);
             Log.Information("Nat Server Listeners started!");
         }
@@ -60,13 +60,17 @@ namespace Wobigtech.Core.AppComm
             Log.Information("Sent test NAT message");
         }
 
-        private static void StartNatMsgHandler()
+        private static void StartNatMsgHandler(string natSubject)
         {
-            Log.Debug("Starting Nat Message Handler");
-            IAsyncSubscription aSubscription = NatConn.SubscribeAsync(NatSubjects.Join);
-            aSubscription.MessageHandler += NatEvents.NatMsgHandlerGeneral;
+            Log.Debug($"Starting Nat Message Handler: {natSubject}");
+            IAsyncSubscription aSubscription = NatConn.SubscribeAsync(natSubject);
+            // TO-DO: Can't do a switch w/ NatSubjects since they aren't constant, need to look at a better way to do this
+            if (natSubject == NatSubjects.Join)
+                aSubscription.MessageHandler += NatEvents.NatMsgHandlerJoinReq;
+            else
+                aSubscription.MessageHandler += NatEvents.NatMsgHandlerGeneral;
             aSubscription.Start();
-            Log.Information("Nat Message Handler Started");
+            Log.Information($"Nat Message Handler Started: {natSubject}");
         }
 
         private static void InitializeNatFactory()

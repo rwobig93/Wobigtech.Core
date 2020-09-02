@@ -10,7 +10,7 @@ namespace Wobigtech.Core.AppComm
     {
         internal static void ProcessJoinRequest(NatDtoJoinReq joinReq)
         {
-            // NEED-TO: Add join request to queue so admin can verify and accept/deny companion join request
+            // TO-DO: Add join request to queue so admin can verify and accept/deny companion join request
             Log.Debug($"JOIN REQUEST: Received [ID]{joinReq.CompanionID} [V]{joinReq.VersionNumber} [HST]{joinReq.HostName} [S]{joinReq.CompanionSecret}");
         }
     }

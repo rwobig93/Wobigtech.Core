@@ -6,7 +6,7 @@ namespace Wobigtech.Companion
     {
         static void Main(string[] args)
         {
-            Function.InitializeLogger(); args = new string[] { "-test" };
+            Function.InitializeLogger();
 
             Function.ParseLaunchArgs(args);
 

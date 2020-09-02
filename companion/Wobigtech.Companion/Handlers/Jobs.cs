@@ -15,8 +15,8 @@ namespace Wobigtech.Companion.Handlers
         {
             return time switch
             {
-                CronTime.MinFifteen => "*/15 * * * * command",
-                _ => "*/15 * * * * command",
+                CronTime.MinFifteen => "*/15 * * * * * command",
+                _ => "*/15 * * * * * command",
             };
         }
         public static void GameAndModUpdater15Min()
@@ -26,7 +26,7 @@ namespace Wobigtech.Companion.Handlers
             // local storage
         }
 
-        internal static void GameServerFileUpdater15Min()
+        public static void GameServerFileUpdater15Min()
         {
             Log.Debug("Starting GameServerFileUpdater15Min()");
             Housekeeping.ReportFileChanges();

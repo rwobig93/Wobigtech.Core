@@ -107,7 +107,42 @@ namespace Wobigtech.Companion.Local
         public static void ExtractSteamCMD()
         {
             Log.Debug("Starting ExtractSteamCMD()");
-            ZipFile.ExtractToDirectory(Path.Combine(Constants.PathCache, "steamcmd.zip"), Constants.PathSourceFolder);
+            var steamCmdDir = OSDynamic.GetSteamCMDDirectory();
+            if (Directory.Exists(steamCmdDir))
+            {
+                try
+                {
+                    Log.Warning($"Somehow steamcmd exists when we already checked for it so we'll delete it: {steamCmdDir}");
+                    Log.Debug($"Deleting existing steamcmd directory: {steamCmdDir}");
+                    Directory.Delete(steamCmdDir, true);
+                    Log.Information($"Deleted existing steamcmd directory: {steamCmdDir}");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Failed to delete existing steamcmd directory before extraction");
+                }
+            }
+            if (!Directory.Exists(steamCmdDir))
+            {
+                try
+                {
+                    Log.Debug($"Creating missing steam directory: {steamCmdDir}");
+                    Directory.CreateDirectory(steamCmdDir);
+                    Log.Information($"Created missing steam directory: {steamCmdDir}");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Failed to create missing steam directory for archive extraction");
+                }
+            }
+            try
+            {
+                ZipFile.ExtractToDirectory(Path.Combine(Constants.PathCache, "steamcmd.zip"), steamCmdDir);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unable to extract steamcmd archive");
+            }
             Log.Information("Finished extracting SteamCMD to source folder");
         }
 

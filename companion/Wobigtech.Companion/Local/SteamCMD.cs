@@ -6,6 +6,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
+using Wobigtech.Companion.Dto;
 using Wobigtech.Companion.Handlers;
 
 namespace Wobigtech.Companion.Local
@@ -24,35 +26,14 @@ namespace Wobigtech.Companion.Local
                 {
                     command = "";
                 }
-                Process steamCMD = new Process()
+
+                RunSteamCMD(new RunSteamDto()
                 {
-                    StartInfo = new ProcessStartInfo()
-                    {
-                        FileName = OSDynamic.GetSteamCMDPath(),
-                        Arguments = command
-                    }
-                };
-                if (null != outputHandler)
-                {
-                    Log.Debug("outputHandler wasn't null, using specified callback");
-                    steamCMD.OutputDataReceived += outputHandler;
-                }
-                else
-                {
-                    Log.Debug("outputHanlder was null, using default event handler");
-                    steamCMD.OutputDataReceived += Events.SteamCMD_OutputDataReceived;
-                }
-                if (null != exitHandler)
-                {
-                    Log.Debug("exitHandler wasn't null, using specified callback");
-                    steamCMD.Exited += exitHandler;
-                }
-                else
-                {
-                    Log.Debug("exitHandler was null, using default event handler");
-                    steamCMD.Exited += Events.SteamCMD_Exited;
-                }
-                steamCMD.Start();
+                    Command = command,
+                    OutputHandler = outputHandler,
+                    ExitHandler = exitHandler
+                });
+
                 Log.Information($"Ran SteamCMD Command: {command}");
                 return true;
             }
@@ -60,6 +41,77 @@ namespace Wobigtech.Companion.Local
             {
                 Log.Error($"SteamCMDCommand Error: {ex.Message}");
                 return false;
+            }
+        }
+
+        private static void RunSteamCMD(RunSteamDto runSteamDto)
+        {
+            Log.Debug("Starting RunSteamCMD");
+
+            Process steamCMD = new Process()
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName = OSDynamic.GetSteamCMDPath(),
+                    Arguments = runSteamDto.Command
+                }
+            };
+            if (runSteamDto.OutputHandler != null)
+            {
+                Log.Debug("outputHandler wasn't null, using specified callback");
+                steamCMD.OutputDataReceived += runSteamDto.OutputHandler;
+            }
+            else
+            {
+                Log.Debug("outputHanlder was null, using default event handler");
+                steamCMD.OutputDataReceived += Events.SteamCMD_OutputDataReceived;
+            }
+            if (runSteamDto.ExitHandler != null)
+            {
+                Log.Debug("exitHandler wasn't null, using specified callback");
+                steamCMD.Exited += runSteamDto.ExitHandler;
+            }
+            else
+            {
+                Log.Debug("exitHandler was null, using default event handler");
+                steamCMD.Exited += Events.SteamCMD_Exited;
+            }
+            steamCMD.StartInfo = new ProcessStartInfo()
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            StreamWriter input = steamCMD.StandardInput;
+            StreamReader output = steamCMD.StandardOutput;
+            StreamReader errors = steamCMD.StandardError;
+
+            Task run = HandleSteamCMDOutputAsync(input, output, errors);
+            run.RunSynchronously();
+
+            steamCMD.Start();
+
+            Log.Debug("Finished RunSteamCMD");
+        }
+
+        private static async Task HandleSteamCMDOutputAsync(StreamWriter input, StreamReader output, StreamReader errors)
+        {
+            try
+            {
+                string received = await output.ReadLineAsync();
+                Log.Debug("STEAMCMD_OUTPUT: { SteamCMDOutput }", received);
+                if (string.IsNullOrWhiteSpace(received))
+                {
+                    Log.Debug("Sending quit command to SteamCMD");
+                    input.WriteLine("quit");
+                    Log.Debug("Sent quit command to SteamCMD");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failure occured during SteamCMD Output Handling");
             }
         }
 

@@ -109,7 +109,7 @@ namespace Wobigtech.Companion
 
         internal static void RecursiveFileScan(string path)
         {
-            Log.Debug($"Starting RecursiveFileScan({path})");
+            Log.Verbose($"Starting RecursiveFileScan({path})");
             foreach (var file in Directory.EnumerateFiles(path))
             {
                 try

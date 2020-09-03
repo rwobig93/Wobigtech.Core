@@ -19,6 +19,9 @@ namespace Wobigtech.Companion.Local
 
         public static void ChangeLoggingLevel(LogEventLevel loggingLevel)
         {
+            #if DEBUG
+            loggingLevel = LogEventLevel.Debug;
+            #endif
             Log.Debug($"Updating Logging level from {LevelSwitch.MinimumLevel} to {loggingLevel}");
             LevelSwitch.MinimumLevel = loggingLevel;
             Log.Information($"Updated logging level to {LevelSwitch.MinimumLevel}");
@@ -230,7 +233,7 @@ namespace Wobigtech.Companion.Local
             // Catch-all
             else
             {
-                Log.Debug($"File hit catch-all and is being ignored: {pathLower}");
+                Log.Verbose($"File hit catch-all and is being ignored: {pathLower}");
                 return;
             }
 

@@ -176,10 +176,10 @@ namespace Wobigtech.Companion.Handlers
 
         public static void TelemetryWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            Log.Debug($"Telemetry worker progress changed: {e.ProgressPercentage}");
+            Log.Verbose($"Telemetry worker progress changed: {e.ProgressPercentage}");
             if (e.ProgressPercentage <= 61)
             {
-                Log.Debug("Telemetry worker progress value is send home server update");
+                Log.Verbose("Telemetry worker progress value is send home server update");
                 if (Constants.NatConn.State != ConnState.CLOSED ||
                     Constants.NatConn.State != ConnState.CONNECTING ||
                     Constants.NatConn.State != ConnState.DISCONNECTED ||

@@ -82,35 +82,51 @@ namespace Wobigtech.Companion.Local
                 steamCMD.Exited += Events.SteamCMD_Exited;
             }
 
-            StreamWriter input = steamCMD.StandardInput;
-            StreamReader output = steamCMD.StandardOutput;
-            StreamReader errors = steamCMD.StandardError;
-
             steamCMD.Start();
 
-            Task.Run(async () => await HandleSteamCMDOutputAsync(input, output, errors));
+            Task.Run(async () => await HandleSteamCMDOutputAsync(steamCMD));
             //Task run = HandleSteamCMDOutputAsync(input, output, errors);
             //run.RunSynchronously();
 
             Log.Debug("Finished RunSteamCMD");
         }
 
-        private static async Task HandleSteamCMDOutputAsync(StreamWriter input, StreamReader output, StreamReader errors)
+        private static async Task HandleSteamCMDOutputAsync(Process process)
         {
+            StreamWriter input = process.StandardInput;
+            StreamReader output = process.StandardOutput;
+            StreamReader errors = process.StandardError;
+
             try
             {
-                string received = await output.ReadLineAsync();
-                Log.Debug("STEAMCMD_OUTPUT: { SteamCMDOutput }", received);
-                if (string.IsNullOrWhiteSpace(received))
+                var startTime = DateTime.Now;
+                while (!process.HasExited)
                 {
-                    Log.Debug("Sending quit command to SteamCMD");
-                    input.WriteLine("quit");
-                    Log.Debug("Sent quit command to SteamCMD");
+                    string received = await output.ReadLineAsync();
+                    Log.Debug($"STEAMCMD_OUTPUT: {received}");
+                    if (received == "Loading Steam API...OK.")
+                    {
+                        Log.Debug("Sending quit command to SteamCMD");
+                        input.WriteLine("quit");
+                        Log.Debug("Sent quit command to SteamCMD");
+                    }
+                    if (DateTime.Now > startTime.AddMinutes(30))
+                    {
+                        Log.Warning("Started process has gone over the allocated time of 30min, cancelling");
+                        return;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failure occured during SteamCMD Output Handling");
+            }
+            finally
+            {
+                input.Flush();
+                input.Close();
+                output.Close();
+                errors.Close();
             }
         }
 

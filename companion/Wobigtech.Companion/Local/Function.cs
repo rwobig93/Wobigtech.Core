@@ -22,10 +22,16 @@ namespace Wobigtech.Companion
     {
         public static void InitializeLogger()
         { 
-            Logger = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(LevelSwitch)
                 .WriteTo.Async(c => c.File($"{PathLogs}\\Wobigtech_Companion.log", rollingInterval: RollingInterval.Day))
                 .WriteTo.Async(c => c.Seq("http://192.168.1.249:5341", apiKey: "bJFq4TA6KTIENPM1YQpE"))
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentUserName()
+                .Enrich.WithProperty("Application", "Companion App")
                 .CreateLogger();
 #if DEBUG
             LevelSwitch.MinimumLevel = LogEventLevel.Debug;
@@ -102,8 +108,7 @@ namespace Wobigtech.Companion
             Log.Debug("Starting StartTimedJobs()");
             InitializeHangFire();
             //RecurringJob.AddOrUpdate(() => Jobs.GameAndModUpdater15Min(), Jobs.GetCronString(CronTime.MinFifteen));
-            Log.Warning(Cron.MinuteInterval(15));
-            RecurringJob.AddOrUpdate(() => Jobs.GameServerFileUpdater15Min(), Cron.MinuteInterval(15));
+            RecurringJob.AddOrUpdate(() => Jobs.GameServerFileUpdater15Min(), Jobs.GetCronString(CronTime.MinFifteen));
             Log.Information("Finished starting timed jobs");
         }
 

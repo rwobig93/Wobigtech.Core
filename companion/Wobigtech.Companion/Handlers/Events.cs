@@ -159,7 +159,7 @@ namespace Wobigtech.Companion.Handlers
                 Constants.TelemetryBag.First().Uptime = uptCounter.NextValue();
                 if (progress > 60)
                 {
-                    Log.Information($"Telemetry Worker Progress is {progress}, resetting");
+                    Log.Debug($"Telemetry Worker Progress is {progress}, resetting");
                     progress = 0;
                 }
                 progress++;

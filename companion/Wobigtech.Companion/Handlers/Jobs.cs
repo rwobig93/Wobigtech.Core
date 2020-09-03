@@ -15,8 +15,8 @@ namespace Wobigtech.Companion.Handlers
         {
             return time switch
             {
-                CronTime.MinFifteen => "*/15 * * * * * command",
-                _ => "*/15 * * * * * command",
+                CronTime.MinFifteen => "*/15 * * * *",
+                _ => "*/15 * * * *",
             };
         }
         public static void GameAndModUpdater15Min()

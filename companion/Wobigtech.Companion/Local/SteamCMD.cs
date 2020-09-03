@@ -53,7 +53,12 @@ namespace Wobigtech.Companion.Local
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName = OSDynamic.GetSteamCMDPath(),
-                    Arguments = runSteamDto.Command
+                    Arguments = runSteamDto.Command,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
                 }
             };
             if (runSteamDto.OutputHandler != null)
@@ -76,22 +81,16 @@ namespace Wobigtech.Companion.Local
                 Log.Debug("exitHandler was null, using default event handler");
                 steamCMD.Exited += Events.SteamCMD_Exited;
             }
-            steamCMD.StartInfo = new ProcessStartInfo()
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
+
             StreamWriter input = steamCMD.StandardInput;
             StreamReader output = steamCMD.StandardOutput;
             StreamReader errors = steamCMD.StandardError;
 
-            Task run = HandleSteamCMDOutputAsync(input, output, errors);
-            run.RunSynchronously();
-
             steamCMD.Start();
+
+            Task.Run(async () => await HandleSteamCMDOutputAsync(input, output, errors));
+            //Task run = HandleSteamCMDOutputAsync(input, output, errors);
+            //run.RunSynchronously();
 
             Log.Debug("Finished RunSteamCMD");
         }

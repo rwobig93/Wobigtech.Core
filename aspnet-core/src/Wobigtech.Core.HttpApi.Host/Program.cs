@@ -18,6 +18,11 @@ namespace Wobigtech.Core
 #endif
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentUserName()
+                .Enrich.WithProperty("Application", "GameServer App")
                 .WriteTo.Async(c => c.File("Logs/logs.txt"))
                 .WriteTo.Async(c => c.Seq("http://192.168.1.249:5341", apiKey: "cKPo89Z2SqNFhISSVC1z"))
                 .CreateLogger();

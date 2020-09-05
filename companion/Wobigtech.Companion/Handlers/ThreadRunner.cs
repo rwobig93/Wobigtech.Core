@@ -11,27 +11,48 @@ namespace Wobigtech.Companion.Handlers
     public class ThreadRunner
     {
         private static BackgroundWorker GameRunner { get; set; }
-        private static List<Action> QueueGameRunner { get; set; }
+        private static List<RunSteamThreadDto> QueueGameRunner { get; set; }
         private static bool RunningGameRunner = false;
 
-        public static bool SteamCMDRun(RunSteamDto runDto)
+        public static bool SteamCMDRun(Action<RunSteamDto> callbackMethod, RunSteamDto steamDto)
         {
-            if (GameRunner == null)
+            try
             {
-                InitializeThreadRunner();
-            }
-            if (QueueGameRunner == null)
-            {
-                InitializeQueueGameRunner();
-            }
+                if (QueueGameRunner == null)
+                {
+                    InitializeQueueGameRunner();
+                }
+                if (GameRunner == null)
+                {
+                    InitializeThreadRunner();
+                }
 
-            return true;
+                AddThreadedMethodToQueue(new RunSteamThreadDto() 
+                {
+                    RunSteamMethod = callbackMethod,
+                    SteamDto = steamDto
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to Add Threaded Method to ThreadQueue");
+                return false;
+            }
+        }
+
+        private static void AddThreadedMethodToQueue(RunSteamThreadDto steamThreadDto)
+        {
+            Log.Debug("Starting AddThreadedMethodToQueue");
+            QueueGameRunner.Add(steamThreadDto);
+            Log.Debug("Finished AddThreadedMethodToQueue");
         }
 
         private static void InitializeQueueGameRunner()
         {
             Log.Debug("Running InitializeQueueGameRunner()");
-            QueueGameRunner = new List<Action>();
+            QueueGameRunner = new List<RunSteamThreadDto>();
             Log.Information("Initialized new GameRunner Queue");
         }
 
@@ -64,7 +85,7 @@ namespace Wobigtech.Companion.Handlers
                     }
                     else
                     {
-                        QueueGameRunner[0]();
+                        QueueGameRunner[0].RunSteamMethod(QueueGameRunner[0].SteamDto);
                         QueueGameRunner.RemoveAt(0);
                     }
                 }

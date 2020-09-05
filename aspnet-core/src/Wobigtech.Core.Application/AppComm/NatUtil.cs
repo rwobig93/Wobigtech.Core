@@ -49,7 +49,6 @@ namespace Wobigtech.Core.AppComm
                 Log.Warning("NatConn is not null, we must have attempted to initialize the Nat Listener after it was already started!");
             }
             StartNatMsgHandler(NatSubjects.Join);
-            SendTestNatMsg("Message", NatSubjects.Join);
             Log.Information("Nat Server Listeners started!");
         }
 

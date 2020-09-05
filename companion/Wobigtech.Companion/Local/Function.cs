@@ -24,8 +24,10 @@ namespace Wobigtech.Companion
         { 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(LevelSwitch)
-                .WriteTo.Async(c => c.File($"{PathLogs}\\Wobigtech_Companion.log", rollingInterval: RollingInterval.Day))
+                .WriteTo.Async(c => c.File($"{PathLogs}\\Wobigtech_Companion.log", rollingInterval: RollingInterval.Day, 
+                  outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"))
                 .WriteTo.Async(c => c.Seq("http://192.168.1.249:5341", apiKey: "bJFq4TA6KTIENPM1YQpE"))
+                .Enrich.WithCaller()
                 .Enrich.WithThreadId()
                 .Enrich.WithThreadName()
                 .Enrich.FromLogContext()
@@ -57,6 +59,7 @@ namespace Wobigtech.Companion
                     Log.Debug("Launch Arg is -test, enabling test mode");
                 }
             }
+            Constants.TestMode = true;
         }
 
         public static void CloseCompanion()
@@ -86,7 +89,6 @@ namespace Wobigtech.Companion
             ScanGameServerFolder();
             StartTimedJobs();
             StartListeners();
-            StartCommandListener();
             Log.Information("Finished starting companion jobs");
         }
 
@@ -101,6 +103,7 @@ namespace Wobigtech.Companion
         {
             Log.Debug("Starting StartListeners()");
             StartDirectoryWatcher(Config.PathGameServerLocation);
+            StartCommandListener();
         }
 
         private static void StartTimedJobs()
@@ -187,16 +190,16 @@ namespace Wobigtech.Companion
             while (!CloseApp)
             {
                 Console.WriteLine(
-                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
-                    $"|  Enter the corresponding menu number for the action you want to perform:  |{Environment.NewLine}" +
-                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
-                    $"|  1. Change Home Server URL                                                |{Environment.NewLine}" +
-                    $"|  2. Open Config & Log root directory                                      |{Environment.NewLine}" +
-                    $"|  3. Change GameServer Folder Location                                     |{Environment.NewLine}" +
-                    $"|  4. Finish Configuration and Run                                          |{Environment.NewLine}" +
-                    $"|  5. Close Companion and Don't Run                                         |{Environment.NewLine}" +
-                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
-                    $"{Environment.NewLine}Option: ");
+                    "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{0}" +
+                    "|  Enter the corresponding menu number for the action you want to perform:  |{0}" +
+                    "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{0}" +
+                    "|  1. Change Home Server URL                                                |{0}" +
+                    "|  2. Open Config & Log root directory                                      |{0}" +
+                    "|  3. Change GameServer Folder Location                                     |{0}" +
+                    "|  4. Finish Configuration and Run                                          |{0}" +
+                    "|  5. Close Companion and Don't Run                                         |{0}" +
+                    "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{0}" +
+                    "{0}Option: ", Environment.NewLine);
                 var answer = Console.ReadLine();
                 Log.Debug($"Menu answer was: {answer}");
                 if (!int.TryParse(answer, out int intAnswer))
@@ -396,32 +399,26 @@ namespace Wobigtech.Companion
                 }
                 if (!connected)
                 {
-                    Console.WriteLine("Wasn't able to successfully connect to the home server, would you like to try to connect to another server?");
-                    string answer = Console.ReadLine();
+                    bool answer = Shared.Tools.PromptYesNo(
+                        "Wasn't able to successfully connect to the home server, would you like to try to connect to another server?");
                     Log.Debug($"Answer: {answer}");
-                    while (answer.ToLower() != "y" || answer.ToLower() != "n")
+                    if (answer)
                     {
-                        Console.WriteLine("Invalid answer, please try again");
-                        answer = Console.ReadLine();
-                        Log.Debug($"Answer: {answer}");
-                    }
-                    if (answer.ToLower() == "y")
-                    {
-                        Log.Information($"Answer was {answer}, calling SetupHomeServer()");
+                        Log.Debug($"Answer was {answer}, calling SetupHomeServer()");
                         SetupHomeServer();
                     }
                     else
                     {
-                        Console.WriteLine("Closing companion as a connection couldn't be established");
+                        Console.WriteLine("Closing companion as a connection couldn't be established, press any key to close");
                         Log.Information($"Answer was {answer}, calling CloseCompanion()");
-                        Console.ReadLine();
+                        Console.Read();
                         CloseCompanion();
                     }
                 }
             }
             if (string.IsNullOrWhiteSpace(Config.HomeServerSecret))
             {
-                Log.Information("Home Server Secret not established yet, calling InitializeSecret()");
+                Log.Information("Home Server Secret not established yet, calling SendJoinRequestInitial()");
                 SendJoinRequestInitial();
             }
             else
@@ -467,17 +464,18 @@ namespace Wobigtech.Companion
             while (!CloseApp)
             {
                 Console.WriteLine(
-                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
-                    $"|  Enter the corresponding menu number for the action you want to perform:  |{Environment.NewLine}" +
-                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}" +
-                    $"|  1. Change Home Server URL                                                |{Environment.NewLine}" +
-                    $"|  2. Open Config & Log root directory                                      |{Environment.NewLine}" +
-                    $"|  3. Change GameServer Folder Location                                     |{Environment.NewLine}" +
-                    $"|  4. Finish Configuration and Run                                          |{Environment.NewLine}" +
-                    $"|  5. Close Companion and Don't Run                                         |{Environment.NewLine}" +
-                    $"|  6. Send Messages to Nat Server                                           |{Environment.NewLine}" +
-                    $"|  7. Subscribe to Nat Channel                                              |{Environment.NewLine}" +
-                    $"|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{Environment.NewLine}");
+                    "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{0}" +
+                    "|  Enter the corresponding menu number for the action you want to perform:  |{0}" +
+                    "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{0}" +
+                    "|  1. Change Home Server URL                                                |{0}" +
+                    "|  2. Open Config & Log root directory                                      |{0}" +
+                    "|  3. Change GameServer Folder Location                                     |{0}" +
+                    "|  4. Finish Configuration and Run                                          |{0}" +
+                    "|  5. Close Companion and Don't Run                                         |{0}" +
+                    "|  6. Send Messages to Nat Server                                           |{0}" +
+                    "|  7. Subscribe to Nat Channel                                              |{0}" +
+                    "|  8. Install/Update Test Game                                              |{0}" +
+                    "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|{0}", Environment.NewLine);
                 Console.Write($"{Environment.NewLine}Test Option: ");
                 var answer = Console.ReadLine();
                 Log.Debug($"Test Menu answer was: {answer}");
@@ -520,6 +518,10 @@ namespace Wobigtech.Companion
                             Log.Debug($"Test Menu option {intAnswer} was selected, calling TestNatListener()");
                             TestNatListener();
                             break;
+                        case 8:
+                            Log.Debug($"Test Menu option {intAnswer} was selected, calling TestSteamCMDInstall()");
+                            TestSteamCMDInstall();
+                            break;
                         default:
                             Log.Debug("Test Answer entered wasn't a valid presented option");
                             Console.WriteLine("Test Answer entered isn't one of the options, please try again");
@@ -530,6 +532,13 @@ namespace Wobigtech.Companion
                 Console.Clear();
             }
             Log.Information("Exited test menu");
+        }
+
+        private static void TestSteamCMDInstall()
+        {
+            Log.Debug("Running test SteamCMD Game Install for app ID 443030");
+            SteamCMD.SteamCMDCommand($"+login anonymous +force_install_dir \"{Constants.PathSourceFolder}\\ConanExiles\" +app_update 443030 validate +quit");
+            Log.Debug("Finished running test SteamCMD Game install for app ID 443030");
         }
 
         private static void TestNatListener()

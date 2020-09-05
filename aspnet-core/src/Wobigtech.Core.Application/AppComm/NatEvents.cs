@@ -27,12 +27,12 @@ namespace Wobigtech.Core.AppComm
                 }
                 else
                 {
-                    Log.Information("Nat Type wasn't a Join Request, skipping");
+                    Log.Debug("Nat Type wasn't a Join Request, skipping");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error($"NAT-JOINREQ ERROR: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                Log.Error(ex, "NAT-JOINREQ ERROR");
             }
         };
     }

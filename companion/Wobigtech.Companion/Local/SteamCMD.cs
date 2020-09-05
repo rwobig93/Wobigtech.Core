@@ -27,12 +27,19 @@ namespace Wobigtech.Companion.Local
                     command = "";
                 }
 
-                RunSteamCMD(new RunSteamDto()
+                var steamDto = new RunSteamDto()
                 {
                     Command = command,
                     OutputHandler = outputHandler,
                     ExitHandler = exitHandler
-                });
+                };
+
+                var threadAdded = ThreadRunner.SteamCMDRun(RunSteamCMD, steamDto);
+
+                if (threadAdded)
+                    Log.Debug("Thread Successfully Added to ThreadQueue");
+                else
+                    Log.Warning("Thread add failed and wasn't added to ThreadQueue");
 
                 Log.Information($"Ran SteamCMD Command: {command}");
                 return true;
@@ -84,14 +91,12 @@ namespace Wobigtech.Companion.Local
 
             steamCMD.Start();
 
-            Task.Run(async () => await HandleSteamCMDOutputAsync(steamCMD));
-            //Task run = HandleSteamCMDOutputAsync(input, output, errors);
-            //run.RunSynchronously();
+            HandleSteamCMDOutput(steamCMD, runSteamDto);
 
             Log.Debug("Finished RunSteamCMD");
         }
 
-        private static async Task HandleSteamCMDOutputAsync(Process process)
+        private static void HandleSteamCMDOutput(Process process, RunSteamDto steamDto)
         {
             StreamWriter input = process.StandardInput;
             StreamReader output = process.StandardOutput;
@@ -99,23 +104,41 @@ namespace Wobigtech.Companion.Local
 
             try
             {
-                var startTime = DateTime.Now;
+                var watchTime = DateTime.Now;
+                int timeAllowance = 15;
                 while (!process.HasExited)
                 {
-                    string received = await output.ReadLineAsync();
-                    Log.Debug($"STEAMCMD_OUTPUT: {received}");
-                    if (received == "Loading Steam API...OK.")
+                    string received = output.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(received))
                     {
-                        Log.Debug("Sending quit command to SteamCMD");
-                        input.WriteLine("quit");
-                        Log.Debug("Sent quit command to SteamCMD");
+                        watchTime = DateTime.Now;
                     }
-                    if (DateTime.Now > startTime.AddMinutes(30))
+                    Log.Debug($"STEAMCMD_OUTPUT: {received}");
+                    if (steamDto.Command == "")
                     {
-                        Log.Warning("Started process has gone over the allocated time of 30min, cancelling");
+                        if (received == "Loading Steam API...OK.")
+                        {
+                            string cmd = "quit";
+                            Log.Debug($"Sending {cmd} command to SteamCMD");
+                            input.WriteLine(cmd);
+                            input.WriteLine(Environment.NewLine);
+                            Log.Debug($"STEAMCMD_INPUT: {cmd}");
+                            process.Kill();
+                        }
+                    }
+                    else
+                    {
+                        Log.Debug("Not doing an update, waiting for other command");
+                    }
+                    Log.Debug($"STEAMCMD_PROC: {process.HasExited}");
+                    bool overTime = DateTime.Now > watchTime.AddSeconds(timeAllowance);
+                    if (overTime)
+                    {
+                        Log.Warning($"Started process has gone over the allocated time of {timeAllowance} seconds, cancelling");
                         return;
                     }
                 }
+                Log.Debug("STEAM_CMD_BACK_ENDED");
             }
             catch (Exception ex)
             {

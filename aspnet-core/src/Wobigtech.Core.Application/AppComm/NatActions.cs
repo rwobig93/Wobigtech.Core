@@ -11,7 +11,17 @@ namespace Wobigtech.Core.AppComm
         internal static void ProcessJoinRequest(NatDtoJoinReq joinReq)
         {
             // TO-DO: Add join request to queue so admin can verify and accept/deny companion join request
-            Log.Debug($"JOIN REQUEST: Received [ID]{joinReq.CompanionID} [V]{joinReq.VersionNumber} [HST]{joinReq.HostName} [S]{joinReq.CompanionSecret}");
+            Log.Information($"JOIN REQUEST: Received [ID]{joinReq.CompanionID} [V]{joinReq.VersionNumber} " +
+                $"[HST]{joinReq.HostName} [S]{joinReq.CompanionSecret}");
+            // TO-DO: AddJoinRequestToQueue(joinReq);
+            ApproveJoinRequest(joinReq);
+        }
+
+        private static void ApproveJoinRequest(NatDtoJoinReq joinReq)
+        {
+            Log.Debug($"Approving Join Request: [ID]{joinReq.CompanionID} [V]{joinReq.VersionNumber} " +
+                $"[HST]{joinReq.HostName} [S]{joinReq.CompanionSecret}");
+            // TO-DO: Add entry to EF Table for Joined Companions
         }
     }
 }

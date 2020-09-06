@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Volo.Abp;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace Wobigtech.Core.EntityFrameworkCore
 {
@@ -17,6 +18,22 @@ namespace Wobigtech.Core.EntityFrameworkCore
             //    b.ConfigureByConvention(); //auto configure for the base class props
             //    //...
             //});
+
+            builder.Entity<GameServer.Game>(b =>
+            {
+                b.ToTable(CoreConsts.DbTablePrefix + "Games", CoreConsts.DbSchema);
+                b.ConfigureByConvention();
+            });
+            builder.Entity<GameServer.GameServer>(b =>
+            {
+                b.ToTable(CoreConsts.DbTablePrefix + "GameServers", CoreConsts.DbSchema);
+                b.ConfigureByConvention();
+            });
+            builder.Entity<GameServer.Server>(b =>
+            {
+                b.ToTable(CoreConsts.DbTablePrefix + "Server", CoreConsts.DbSchema);
+                b.ConfigureByConvention();
+            });
         }
     }
 }

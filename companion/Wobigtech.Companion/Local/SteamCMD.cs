@@ -83,7 +83,7 @@ namespace Wobigtech.Companion.Local
             }
             else
             {
-                Log.Debug("outputHanlder was null, using default event handler");
+                Log.Debug("outputHandler was null, using default event handler");
                 steamCMD.OutputDataReceived += Events.SteamCMD_OutputDataReceived;
             }
             if (runSteamDto.ExitHandler != null)

@@ -22,6 +22,12 @@ namespace Wobigtech.Core.EntityFrameworkCore
     {
         public DbSet<AppUser> Users { get; set; }
 
+        // Custom Properites for Entity Framework
+        public DbSet<GameServer.Game> Games { get; set; }
+        public DbSet<GameServer.Server> Servers { get; set; }
+        public DbSet<GameServer.GameServer> GameServers { get; set; }
+
+
         /* Add DbSet properties for your Aggregate Roots / Entities here.
          * Also map them inside CoreDbContextModelCreatingExtensions.ConfigureCore
          */

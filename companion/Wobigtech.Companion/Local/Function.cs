@@ -59,7 +59,7 @@ namespace Wobigtech.Companion
                     Log.Debug("Launch Arg is -test, enabling test mode");
                 }
             }
-            Constants.TestMode = true;
+            //Constants.TestMode = true;
         }
 
         public static void CloseCompanion()
@@ -537,7 +537,10 @@ namespace Wobigtech.Companion
         private static void TestSteamCMDInstall()
         {
             Log.Debug("Running test SteamCMD Game Install for app ID 443030");
-            SteamCMD.SteamCMDCommand($"+login anonymous +force_install_dir \"{Constants.PathSourceFolder}\\ConanExiles\" +app_update 443030 validate +quit");
+            string command = $"+@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir " +
+                $"\"{Constants.PathSourceFolder}\\ConanExiles\" +app_info_update 1 +app_update 443030 +app_status 443030";
+            //string command = $"+login anonymous +force_install_dir \"{Constants.PathSourceFolder}\\ConanExiles\" +app_update 443030 validate";
+            SteamCMD.SteamCMDCommand(command);
             Log.Debug("Finished running test SteamCMD Game install for app ID 443030");
         }
 

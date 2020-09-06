@@ -17,14 +17,22 @@ namespace Wobigtech.Companion.Local
         public static bool SteamCMDCommand(string command, DataReceivedEventHandler outputHandler = null, EventHandler exitHandler = null)
         {
             // .\steamcmd.exe +login anonymous +force_install_dir "ConanExiles" +app_update 443030 validate +quit
+            // .\steamcmd.exe +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login anonymous +force_install_dir "ConanExiles" +app_info_update 1 +app_update 443030 +app_status 443030 +quit
             // .\steamcmd.exe +@ShutdownOnFailedCommand 1 +@NoPromptForPassword 1 +login ${SteamLoginName} +app_info_update 1 +app_status ${SteamAppID} +quit
             // https://steamapi.xpaw.me/
             Log.Debug($"Starting SteamCMDCommand({command}, {outputHandler}, {exitHandler})");
             try
             {
+                // Steam CMD will update by default w/o an argument
                 if (command == "update")
                 {
                     command = "";
+                }
+
+                // Add +quit to the end of the argument array to close upon finishing
+                if (!command.EndsWith(" +quit"))
+                {
+                    command += " +quit";
                 }
 
                 var steamDto = new RunSteamDto()
@@ -104,41 +112,13 @@ namespace Wobigtech.Companion.Local
 
             try
             {
-                var watchTime = DateTime.Now;
-                int timeAllowance = 15;
                 while (!process.HasExited)
                 {
                     string received = output.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(received))
-                    {
-                        watchTime = DateTime.Now;
-                    }
                     Log.Debug($"STEAMCMD_OUTPUT: {received}");
-                    if (steamDto.Command == "")
-                    {
-                        if (received == "Loading Steam API...OK.")
-                        {
-                            string cmd = "quit";
-                            Log.Debug($"Sending {cmd} command to SteamCMD");
-                            input.WriteLine(cmd);
-                            input.WriteLine(Environment.NewLine);
-                            Log.Debug($"STEAMCMD_INPUT: {cmd}");
-                            process.Kill();
-                        }
-                    }
-                    else
-                    {
-                        Log.Debug("Not doing an update, waiting for other command");
-                    }
-                    Log.Debug($"STEAMCMD_PROC: {process.HasExited}");
-                    bool overTime = DateTime.Now > watchTime.AddSeconds(timeAllowance);
-                    if (overTime)
-                    {
-                        Log.Warning($"Started process has gone over the allocated time of {timeAllowance} seconds, cancelling");
-                        return;
-                    }
                 }
-                Log.Debug("STEAM_CMD_BACK_ENDED");
+                Log.Debug("STEAMCMD_OUTPUT_ENDED");
+                // TO-DO: Need to write output log to validate against for versioning and UI viewing
             }
             catch (Exception ex)
             {

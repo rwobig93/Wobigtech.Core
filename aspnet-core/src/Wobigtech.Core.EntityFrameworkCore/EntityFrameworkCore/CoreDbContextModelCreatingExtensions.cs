@@ -34,6 +34,16 @@ namespace Wobigtech.Core.EntityFrameworkCore
                 b.ToTable(CoreConsts.DbTablePrefix + "Server", CoreConsts.DbSchema);
                 b.ConfigureByConvention();
             });
+            builder.Entity<Manage.CompanionRequest>(b =>
+            {
+                b.ToTable(CoreConsts.DbTablePrefix + "JoinRequests", CoreConsts.DbSchema);
+                b.ConfigureByConvention();
+            });
+            builder.Entity<Manage.CompanionManaged>(b =>
+            {
+                b.ToTable(CoreConsts.DbTablePrefix + "ManagedCompanions", CoreConsts.DbSchema);
+                b.ConfigureByConvention();
+            });
         }
     }
 }

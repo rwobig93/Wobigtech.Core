@@ -16,12 +16,21 @@ namespace Wobigtech.Core.Manage
         public string PrivateIP { get; set; }
         public List<int> PortsAllowed { get; set; } = new List<int>();
         public List<int> PortsUsed { get; set; } = new List<int>();
+        public DateTime LastSeen { get; set; }
 
         public CompanionManaged(Guid id) : base(id)
         {
         }
 
-        public CompanionManaged(string companionID, string version, string hostname, string companionSecretHash, string publicIP, string privateIP, List<int> portsAllowed, List<int> portsUsed)
+        public CompanionManaged(string companionID,
+                                string version,
+                                string hostname,
+                                string companionSecretHash,
+                                string publicIP,
+                                string privateIP,
+                                List<int> portsAllowed,
+                                List<int> portsUsed,
+                                DateTime lastSeen)
         {
             CompanionID = companionID;
             Version = version;
@@ -31,6 +40,7 @@ namespace Wobigtech.Core.Manage
             PrivateIP = privateIP;
             PortsAllowed = portsAllowed;
             PortsUsed = portsUsed;
+            LastSeen = lastSeen;
         }
     }
 }

@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Wobigtech.Core.Domain.Shared\Wobigtech.Core.Domain.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Manage\" />
+  </ItemGroup>
+
 </Project>

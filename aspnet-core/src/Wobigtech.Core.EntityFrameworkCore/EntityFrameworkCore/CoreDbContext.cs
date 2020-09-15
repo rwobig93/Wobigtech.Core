@@ -26,7 +26,8 @@ namespace Wobigtech.Core.EntityFrameworkCore
         public DbSet<GameServer.Game> Games { get; set; }
         public DbSet<GameServer.Server> Servers { get; set; }
         public DbSet<GameServer.GameServer> GameServers { get; set; }
-
+        public DbSet<Manage.CompanionRequest> JoinRequests { get; set; }
+        public DbSet<Manage.CompanionManaged> ManagedCompanions { get; set; }
 
         /* Add DbSet properties for your Aggregate Roots / Entities here.
          * Also map them inside CoreDbContextModelCreatingExtensions.ConfigureCore

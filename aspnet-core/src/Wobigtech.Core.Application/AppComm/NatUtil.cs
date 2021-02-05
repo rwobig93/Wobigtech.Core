@@ -52,6 +52,7 @@ namespace Wobigtech.Core.AppComm
             Log.Information("Nat Server Listeners started!");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
         private static void SendTestNatMsg(string message, string subject)
         {
             Log.Debug($"Sending test NAT message: [sub]{subject} [msg] {message}");

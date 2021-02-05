@@ -11,7 +11,7 @@ namespace Wobigtech.Core.Manage
         {
             Log.Debug("Starting Companion Add");
 
-            
+            // TO-DO: Add managed companion
         }
     }
 }

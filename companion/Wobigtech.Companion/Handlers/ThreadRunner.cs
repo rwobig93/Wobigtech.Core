@@ -61,9 +61,10 @@ namespace Wobigtech.Companion.Handlers
             Log.Debug("Running InitializeThreadRunner()");
 
             RunningGameRunner = true;
-            GameRunner = new BackgroundWorker();
-
-            GameRunner.WorkerReportsProgress = true;
+            GameRunner = new BackgroundWorker
+            {
+                WorkerReportsProgress = true
+            };
             GameRunner.ProgressChanged += GameRunner_ProgressChanged;
             GameRunner.DoWork += GameRunner_DoWork;
             GameRunner.RunWorkerCompleted += GameRunner_RunWorkerCompleted;

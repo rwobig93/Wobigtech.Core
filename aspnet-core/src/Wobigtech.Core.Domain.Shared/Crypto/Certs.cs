@@ -19,7 +19,7 @@ namespace Wobigtech.Core.Crypto
 {
     public static class Certs
     {
-        private static string certPass = "WT789321";
+        private static readonly string certPass = "WT789321";
 
         public static Options GetNATConnOptions(string url, string certPath, RemoteCertificateValidationCallback callback = null)
         {

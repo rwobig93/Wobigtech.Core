@@ -12,7 +12,8 @@ namespace Wobigtech.Core
             services.AddApplication<CoreHttpApiHostModule>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        // , IWebHostEnvironment env, ILoggerFactory loggerFactory
+        public void Configure(IApplicationBuilder app)
         {
             app.InitializeApplication();
         }

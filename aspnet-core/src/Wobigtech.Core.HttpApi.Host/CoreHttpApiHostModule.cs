@@ -50,7 +50,7 @@ namespace Wobigtech.Core
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             var configuration = context.Services.GetConfiguration();
-            var hostingEnvironment = context.Services.GetHostingEnvironment();
+            //var hostingEnvironment = context.Services.GetHostingEnvironment();
 
             ConfigureUrls(configuration);
             ConfigureConventionalControllers();
@@ -183,10 +183,10 @@ namespace Wobigtech.Core
             app.UseAuthentication();
             app.UseJwtTokenMiddleware();    
             
-            if (MultiTenancyConsts.IsEnabled)
-            {
-                app.UseMultiTenancy();
-            }
+            //if (MultiTenancyConsts.IsEnabled)
+            //{
+            //    app.UseMultiTenancy();
+            //}
 
             app.UseAbpRequestLocalization();
             app.UseIdentityServer();

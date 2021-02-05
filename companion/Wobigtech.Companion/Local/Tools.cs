@@ -14,11 +14,14 @@ namespace Wobigtech.Companion.Shared
 {
     public static class Tools
     {
-        public static bool CreateSelfSignedCert(X509ContentType certType, string certLocation, string certName)
+        public static bool CreateSelfSignedCert(X509ContentType certType)
         {
             var ecdsa = ECDsa.Create(); // generate asymmetric key pair
             var req = new CertificateRequest($"cn={Environment.MachineName}", ecdsa, HashAlgorithmName.SHA256);
             var cert = req.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(5));
+            string certLocation;
+            //string certName = "";
+            // TO-DO: Specify cert location and name for future changes
             switch (certType)
             {
                 case X509ContentType.Pfx:

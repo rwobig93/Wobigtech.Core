@@ -285,13 +285,14 @@ namespace Wobigtech.Companion
         private static void ValidateAllFilePaths()
         {
             Log.Debug("Calling ValidateAllFilePaths()");
-            List<string> directories = new List<string>();
+            List<string> directories = new List<string>
+            {
+                PathLogs,
+                PathSourceFolder,
+                PathCache,
+                Config.PathGameServerLocation
+            };
 
-            directories.Add(Constants.PathLogs);
-            directories.Add(Constants.PathSourceFolder);
-            directories.Add(Constants.PathCache);
-            directories.Add(Config.PathGameServerLocation);
-            
             foreach (var dir in directories)
             {
                 try
